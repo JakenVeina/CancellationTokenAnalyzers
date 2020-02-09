@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
@@ -34,81 +32,11 @@ namespace CancellationTokenAnalyzers
                 return;
 
             context.RegisterOperationAction(
-                c => AnalyzeMethodInvocation2(c, cancellationTokenType),
+                c => AnalyzeMethodInvocation(c, cancellationTokenType),
                 OperationKind.Invocation);
         }
 
-        //private static void AnalyzeMethodInvocation(
-        //    OperationAnalysisContext context,
-        //    ITypeSymbol cancellationTokenType)
-        //{
-        //    var invocation = (IInvocationOperation)context.Operation;
-
-        //    // Check to see if the invocation is already properly cancelled.
-        //    // This check is really fast, do this first.
-        //    var (cancellationTokenArgument, cancellationTokenIndex) = invocation.Arguments
-        //        .Where(argument => !argument.Parameter.IsThis || invocation.Instance != null)
-        //        .Select((argument, index) => (argument, index))
-        //        .FirstOrDefault(tuple => SymbolEqualityComparer.IncludeNullability.Equals(tuple.argument.Parameter.Type, cancellationTokenType));
-            
-        //    // If there's a CancellationToken given explicitly, we're done
-        //    if (cancellationTokenArgument?.IsImplicit == false)
-        //        return;
-
-        //    // Check to see if there's an available CancellationToken in scope.
-        //    // This check requires a lookup, but with a relatively small scope, do this second.
-        //    var availableCancellationToken = invocation.SemanticModel
-        //        .LookupSymbols(
-        //            position: invocation.Syntax.SpanStart)
-        //        .Select<ISymbol, (ISymbol symbol, ITypeSymbol? type)>(symbol => symbol switch
-        //        {
-        //            IFieldSymbol fieldSymbol            => (symbol, fieldSymbol.Type),
-        //            ILocalSymbol localSymbol            => (symbol, localSymbol.Type),
-        //            IParameterSymbol parameterSymbol    => (symbol, parameterSymbol.Type),
-        //            _                                   => (symbol, null),
-        //        })
-        //        .FirstOrDefault((tuple) => SymbolEqualityComparer.IncludeNullability.Equals(tuple.type, cancellationTokenType))
-        //        .symbol;
-            
-        //    if (availableCancellationToken is null)
-        //        return;
-
-        //    // Check to see if there's an available overload or extension method that takes a CancellationToken
-        //    // This check requires a lookup, including all static members in all referenced assemblies in the project, do this last.
-        //    if (cancellationTokenArgument is null)
-        //    {
-        //        var cancellableMethod = invocation.SemanticModel
-        //            .LookupSymbols(
-        //                position:                       invocation.Syntax.SpanStart,
-        //                container:                      invocation.Instance?.Type ?? invocation.TargetMethod.ContainingType,
-        //                name:                           invocation.TargetMethod.Name,
-        //                includeReducedExtensionMethods: true)
-        //            .OfType<IMethodSymbol>()
-        //            .FirstOrDefault(m => !SymbolEqualityComparer.IncludeNullability.Equals(m, invocation.TargetMethod)
-        //                && m.IsStatic == invocation.TargetMethod.IsStatic
-        //                && m.Parameters.Any(p => SymbolEqualityComparer.IncludeNullability.Equals(p.Type, cancellationTokenType))
-        //                && Enumerable.SequenceEqual(
-        //                    m.Parameters.Where(p => !SymbolEqualityComparer.IncludeNullability.Equals(p.Type, cancellationTokenType)),
-        //                    invocation.TargetMethod.Parameters,
-        //                    ParameterSymbolCompatibilityComparer.Default));
-
-        //        if (cancellableMethod is null)
-        //            return;
-
-        //        cancellationTokenIndex = cancellableMethod.Parameters
-        //            .Select((parameter, index) => (parameter, index))
-        //            .FirstOrDefault(tuple => SymbolEqualityComparer.IncludeNullability.Equals(tuple.parameter.Type, cancellationTokenType))
-        //            .index;
-        //    }
-
-        //    // If we made it here, we have everything we need to build a diagnostic, with codefix metadata
-        //    context.ReportDiagnostic(CancellationTokenAvailableButNotSuppliedDiagnostic.Create(
-        //        invocation.Syntax.GetLocation(),
-        //        availableCancellationToken.Name,
-        //        cancellationTokenIndex));
-        //}
-
-        private static void AnalyzeMethodInvocation2(
+        private static void AnalyzeMethodInvocation(
             OperationAnalysisContext context,
             ITypeSymbol cancellationTokenType)
         {
