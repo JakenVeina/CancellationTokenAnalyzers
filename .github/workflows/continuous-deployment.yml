@@ -18,8 +18,9 @@ jobs:
         with:
           dotnet-version: 3.1.100
           source-url: https://api.nuget.org/v3/index.json
+          owner: JakeMeiergerd
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.NUGET_AUTH_TOKEN}}
+            NUGET_AUTH_TOKEN: ${{secrets.NUGET_AUTH_TOKEN}}
       - name: Test
         run: dotnet test
       - name: Build
