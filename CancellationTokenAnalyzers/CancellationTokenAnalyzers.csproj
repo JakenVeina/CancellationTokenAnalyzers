@@ -13,7 +13,6 @@
     <Authors>Jake Meiergerd</Authors>
     <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/JakenVeina/CancellationTokenAnalyzers</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
     <RepositoryUrl>https://github.com/JakenVeina/CancellationTokenAnalyzers</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>A Roslyn Analyzer to support proper usage of CancellationToken values.</Description>
