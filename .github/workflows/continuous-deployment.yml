@@ -17,13 +17,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.100
-          source-url: https://api.nuget.org/v3/index.json
-          owner: JakeMeiergerd
-        env:
-            NUGET_AUTH_TOKEN: ${{secrets.NUGET_AUTH_TOKEN}}
       - name: Test
         run: dotnet test
       - name: Build
         run: dotnet build CancellationTokenAnalyzers --configuration Release
       - name: Publish
-        run: dotnet nuget push CancellationTokenAnalyzers/bin/Release/*.nupkg
+        run: dotnet nuget push CancellationTokenAnalyzers/bin/Release/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{secrets.NUGET_AUTH_TOKEN}} --skip-duplicate
